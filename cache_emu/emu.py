@@ -95,10 +95,6 @@ class CacheEmu:
         
         wlfu_w_lens = np.array(wlfu_w_lens, dtype=np.int32)
         lib_cache_emu.setup_swlfu_feature_types(self.handler, wlfu_w_lens.ctypes, wlfu_w_lens.shape[0])
-        
-        if use_bert_feature:
-            # 由于bert_utils需要feature_dims()，因此bert_utils的初始化需要放到最后
-            bert_utils.init(out_feature_dim=self.feature_dims())
     
     def get_features(self, contents: np.array):
         assert (contents.dtype == np.int32)
@@ -106,12 +102,6 @@ class CacheEmu:
         feature_struct = lib_cache_emu.get_features(self.handler, contents.ctypes, num_contents)
         features = ctypes_utils.buffer_to_numpy(feature_struct, np.float32)
         features = features.reshape((num_contents, self.feature_dims()))
-        
-        alpha = 0.5
-        if bert_utils.enabled:
-            bert_features = bert_utils.forward(contents)
-            bert_utils.backward(contents, features)
-            features = features * alpha + bert_features * (1 - alpha)
         
         return features
     
