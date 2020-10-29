@@ -1,8 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
-.gitignore
 .idea/
 cache_emu/cpp_src/.DS_Store
 __pycache__
 *.egg-info
 build
 .DS_Store
+cmake-build-debug
