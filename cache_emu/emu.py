@@ -1,12 +1,15 @@
 import ctypes
+import os
 
 import numpy as np
 
-from utils import proj_utils, ctypes_utils, bert_utils
-from utils.mpi_utils import sync_time_span
+from .utils import ctypes_utils, proj_utils
 
-lib_path = "src/cache_emu/build/libcacheemu.so"
-lib_cache_emu = ctypes_utils.load_lib(proj_utils.abs_path(lib_path))
+# 项目根目录
+_project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+
+lib_path = proj_utils.abs_path("./build/libcacheemu.so")
+lib_cache_emu = ctypes_utils.load_lib(lib_path)
 
 ctypes_utils.setup_res_type(lib_cache_emu.load_dataset, ctypes.c_void_p)
 ctypes_utils.setup_res_type(lib_cache_emu.slice_dataset_by_time, ctypes.c_int32)
@@ -25,7 +28,7 @@ ctypes_utils.setup_res_type(lib_cache_emu.finished, ctypes.c_int32)
 ctypes_utils.setup_res_type(lib_cache_emu.on_episode_end, ctypes.c_float)
 
 
-def init_loader(data, interval=1):
+def init_loader(data, t_beg: int, t_end: int, t_interval=1):
     print("data:\n", data.head())
     
     content_ids = np.array(data['content_id'], dtype=np.int32)
@@ -34,8 +37,7 @@ def init_loader(data, interval=1):
     num_requests = len(content_ids)
     lib_cache_emu.load_dataset(content_ids.ctypes, timestamps.ctypes, num_requests)
     
-    t_beg, t_end = sync_time_span(timestamps[0], timestamps[-1])
-    num_steps = lib_cache_emu.slice_dataset_by_time(int(t_beg), int(t_end), interval)
+    num_steps = lib_cache_emu.slice_dataset_by_time(int(t_beg), int(t_end), t_interval)
     
     return num_requests, num_steps, (t_beg, t_end)
 

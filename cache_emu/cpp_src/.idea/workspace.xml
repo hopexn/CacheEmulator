@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="LibCache" targetName="test_cache_emu" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="77bf4b1e-bfe7-4c97-b3d9-516a9476d8d0" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../../.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../utils/ctypes_utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../utils/proj_utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/.idea/CacheEmu.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../callback.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/.idea/dictionaries/yanhaopeng.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/yanhaopeng.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/CacheEmu.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/.idea/src.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/src.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/apis.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/apis.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/apis.h" beforeDir="false" afterPath="$PROJECT_DIR$/apis.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/buffer.h" beforeDir="false" afterPath="$PROJECT_DIR$/buffer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/cache.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cache.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/cache_emu.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/cache_emu.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/feature.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/feature.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/request.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/request.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../cpp_src/utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/utils.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../emu.py" beforeDir="false" afterPath="$PROJECT_DIR$/../emu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../envs.py" beforeDir="false" afterPath="$PROJECT_DIR$/../envs.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
+  <component name="ProjectFrameBounds" fullScreen="true">
+    <option name="y" value="23" />
+    <option name="width" value="2560" />
+    <option name="height" value="1417" />
+  </component>
+  <component name="ProjectId" id="1jYGjdvp5RUA72S5N7H9PxhHGQu" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
+  </component>
+  <component name="RunManager" selected="CMake Application.test_cache_emu">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="test_cache_emu" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="LibCache" TARGET_NAME="test_cache_emu" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="LibCache" RUN_TARGET_NAME="test_cache_emu">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="$(build_dir)/libcacheemu.so" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/Makefile" target="$(build_dir)/libcacheemu.so" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.test_cache_emu" />
+      <item itemvalue="Makefile.$(build_dir)/libcacheemu.so" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Makefile.$(build_dir)/libcacheemu.so" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="project-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="77bf4b1e-bfe7-4c97-b3d9-516a9476d8d0" name="Default Changelist" comment="" />
+      <created>1592745095397</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1592745095397</updated>
+      <workItem from="1592745096571" duration="38000" />
+      <workItem from="1592745259169" duration="525000" />
+      <workItem from="1592839545311" duration="622000" />
+      <workItem from="1593571152923" duration="1519000" />
+      <workItem from="1593692013234" duration="307000" />
+      <workItem from="1593783057813" duration="533000" />
+      <workItem from="1594049856471" duration="1796000" />
+      <workItem from="1603973749026" duration="5051000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="910" y="391" key="#Inspections" timestamp="1603976322218">
+      <screen x="0" y="0" width="2560" height="1440" />
+    </state>
+    <state x="910" y="391" key="#Inspections/0.0.2560.1440@0.0.2560.1440" timestamp="1603976322218" />
+  </component>
+</project>

@@ -1,6 +1,5 @@
 #include <iostream>
 #include <set>
-#include <tuple>
 
 using namespace std;
 
@@ -14,8 +13,8 @@ class CacheEmu
 protected:
     int capacity;
 
-    Cache *cache = nullptr;
-    FeatureManager *feature_manager = nullptr;
+    Cache cache;
+    FeatureManager feature_manager;
     RequestLoader *loader = nullptr;
 
     //用于记录已经处理的请求数以及其中命中的次数
@@ -27,19 +26,18 @@ protected:
     int i_slice = 0, i_episode = 0;
 
     //用于保存待替换与替换目标内容
-    ElementSet s_buf_old, s_buf_new;
+    ContentSet s_buf_old, s_buf_new;
 
     //缓冲区，用于保存用于返回的结果
-    ElementVector step_buf;
-    ElementVector candidate_buf;
+    ContentVector step_buf;
+    ContentVector candidate_buf;
     FloatVector candidate_frequency_buf;
 
 public:
     explicit CacheEmu(int capacity, RequestLoader *loader)
+            : cache(capacity), feature_manager()
     {
         this->capacity = capacity;
-        this->cache = new Cache(capacity);
-        this->feature_manager = new FeatureManager();
         this->loader = loader;
     }
 
@@ -57,87 +55,81 @@ public:
         episode_request_cnt = 0;
         episode_hit_cnt = 0;
 
-        this->cache->reset();
-        this->feature_manager->reset();
+        this->cache.reset();
+        this->feature_manager.reset();
 
         candidate_buf.resize(0);
-        for (auto e: *cache->get_contents()) {
+        for (auto e: *cache.get_contents()) {
             candidate_buf.push_back(e);
         }
 
         candidate_frequency_buf.resize(0);
-        for (auto e: *this->cache->get_frequencies(&candidate_buf)) {
+        for (auto e: *this->cache.get_frequencies(&candidate_buf)) {
             candidate_frequency_buf.push_back(e);
         }
-        this->cache->clear_frequencies();
+        this->cache.clear_frequencies();
     }
 
-    //回收空间
-    virtual ~CacheEmu()
-    {
-        delete this->cache;
-        delete this->feature_manager;
-    }
 
     //使用id特征
     void use_id_feature()
     {
-        this->feature_manager->add_feature_extractor(new IdFeatureExtractor());
+        this->feature_manager.add_feature_extractor(new IdFeatureExtractor());
     }
 
     //使用lfu特征
     void use_lfu_feature()
     {
-        //this->feature_manager->add_feature_extractor(new LfuFeatureExtractor());
-        this->feature_manager->add_feature_extractor(new OgdLfuFeatureExtractor(this->capacity));
+        //this->feature_manager.add_feature_extractor(new LfuFeatureExtractor());
+        this->feature_manager.add_feature_extractor(new OgdLfuFeatureExtractor(this->capacity));
     }
 
     //使用lru特征
     void use_lru_feature()
     {
-        //this->feature_manager->add_feature_extractor(new LruFeatureExtractor());
-        this->feature_manager->add_feature_extractor(new OgdLruFeatureExtractor(this->capacity));
+        //this->feature_manager.add_feature_extractor(new LruFeatureExtractor());
+        this->feature_manager.add_feature_extractor(new OgdLruFeatureExtractor(this->capacity));
     }
 
     //使用ogd_optimal特征
     void use_ogd_opt_feature()
     {
-        this->feature_manager->add_feature_extractor(new OgdOptimalFeatureExtractor(this->capacity));
+        this->feature_manager.add_feature_extractor(new OgdOptimalFeatureExtractor(this->capacity));
     }
 
     //使用带滑动窗口的LFU特征
     void use_swlfu_feature(size_t history_sw_len)
     {
-        this->feature_manager->add_feature_extractor(new SWLfuFeatureExtractor(history_sw_len, this->loader));
+        this->feature_manager.add_feature_extractor(new SWLfuFeatureExtractor(history_sw_len, this->loader));
     }
 
     //返回特征维度大小
     size_t feature_dims()
     {
-        return this->feature_manager->feature_dims;
+        return this->feature_manager.feature_dims;
     }
 
     //获取特征
-    inline Feature get_features(ElementVector &v)
+    inline Feature get_features(ContentVector &v)
     {
-        return this->feature_manager->get_features(v);
+        return this->feature_manager.get_features(v);
     }
 
     //更新缓存内容
-    inline void update_cache(ElementType *es, size_t size)
+    inline void update_cache(ContentType *es, size_t size)
     {
         s_buf_old.clear();
         s_buf_new.clear();
 
-        auto cache_contents = this->cache->get_contents();
+        auto cache_contents = this->cache.get_contents();
         copy_to_std_set(cache_contents->data(), size, s_buf_old);
         copy_to_std_set(es, size, s_buf_new);
 
-        s_buf_old.erase(NoneType);
-        s_buf_new.erase(NoneType);
+        s_buf_old.erase(NoneContentType);
+        s_buf_new.erase(NoneContentType);
 
         for (size_t i = 0; i < size; i++) {
-            if (es[i] != NoneType && this->cache->find(es[i]) != -1) {
+            if (es[i] != NoneContentType && this->cache.find(es[i]) != -1) {
                 s_buf_old.erase(es[i]);
                 s_buf_new.erase(es[i]);
             }
@@ -150,13 +142,13 @@ public:
         auto it1 = s_buf_old.begin();
         auto it2 = s_buf_new.begin();
         while (it1 != s_buf_old.end() && it2 != s_buf_new.end()) {
-            cache->replace(*it2, *it1);
+            cache.replace(*it2, *it1);
             it1++;
             it2++;
         }
 
         while (it2 != s_buf_new.end()) {
-            cache->replace(*it2, NoneType);
+            cache.replace(*it2, NoneContentType);
             it2++;
         }
     }
@@ -168,7 +160,7 @@ public:
     }
 
     //获取当前时间片
-    inline std::size_t get_i_slice()
+    inline std::size_t get_i_slice() const
     {
         return this->i_slice;
     }
@@ -193,9 +185,9 @@ public:
     }
 
     //获取当前缓存中的内容
-    ElementVector *get_cache_contents()
+    ContentVector *get_cache_contents()
     {
-        auto contents = this->cache->get_contents();
+        auto contents = this->cache.get_contents();
         if (VERBOSE) {
             cout << "cache_contents: " << *contents << endl;
         }
@@ -203,7 +195,7 @@ public:
     }
 
     //获取候选内容：当前缓存内容+发生miss的内容
-    ElementVector *get_candidates()
+    ContentVector *get_candidates()
     {
         if (VERBOSE) {
             cout << "candidates: " << candidate_buf << endl;
@@ -221,7 +213,7 @@ public:
     }
 
     //获取当前步处理的内容
-    inline ElementVector *get_step_elements()
+    inline ContentVector *get_step_elements()
     {
         return &step_buf;
     }
@@ -253,7 +245,7 @@ public:
 class ActiveCacheEmu : public CacheEmu
 {
 private:
-    ElementSet missed_content_set;
+    ContentSet missed_content_set;
 
 public:
     ActiveCacheEmu(int capacity, RequestLoader *loader) : CacheEmu(capacity, loader) {}
@@ -275,7 +267,7 @@ public:
             auto r = slice.data[i];
             step_buf.push_back(r.content_id);
 
-            auto hit = cache->hit_test(r.content_id);
+            auto hit = cache.hit_test(r.content_id);
             this->hit_cnt += hit;
             this->episode_hit_cnt += hit;
 
@@ -286,12 +278,12 @@ public:
         this->request_cnt += slice.size;
         this->episode_request_cnt += slice.size;
 
-        this->feature_manager->update(slice);
+        this->feature_manager.update(slice);
 
         //生成candidates及其对应的频率
         candidate_buf.resize(0);
 
-        for (auto e: *cache->get_contents()) {
+        for (auto e: *cache.get_contents()) {
             candidate_buf.push_back(e);
         }
 
@@ -300,10 +292,10 @@ public:
         }
 
         candidate_frequency_buf.resize(0);
-        for (auto e: *this->cache->get_frequencies(&candidate_buf)) {
+        for (auto e: *this->cache.get_frequencies(&candidate_buf)) {
             candidate_frequency_buf.push_back(e);
         }
-        this->cache->clear_frequencies();
+        this->cache.clear_frequencies();
 
         return {slice.size, missed_content_set.size(), 0};
     }
@@ -320,7 +312,7 @@ public:
     Triple step() override
     {
         step_buf.resize(0);
-        ElementType missed_element = NoneType;
+        ContentType missed_element = NoneContentType;
 
         if (slice.size == 0) {
             auto slice_range_ptrs = loader->get_slice_range_ptrs(this->i_slice);
@@ -337,7 +329,7 @@ public:
             auto r = slice.data[idx];
             step_buf.push_back(r.content_id);
 
-            auto hit = cache->hit_test(r.content_id);
+            auto hit = cache.hit_test(r.content_id);
             this->hit_cnt += hit;
             this->episode_hit_cnt += hit;
 
@@ -353,27 +345,27 @@ public:
 
         this->request_cnt += this->slice_processed.size;
         this->episode_request_cnt += this->slice_processed.size;
-        this->feature_manager->update(this->slice_processed);
+        this->feature_manager.update(this->slice_processed);
 
         //生成candidates及其对应的频率
         candidate_buf.resize(0);
-        for (auto &e: *cache->get_contents()) {
+        for (auto &e: *cache.get_contents()) {
             candidate_buf.push_back(e);
         }
 
-        if (missed_element != NoneType) {
+        if (missed_element != NoneContentType) {
             candidate_buf.push_back(missed_element);
         }
 
         candidate_frequency_buf.resize(0);
-        for (auto &e: *this->cache->get_frequencies(&candidate_buf)) {
+        for (auto &e: *this->cache.get_frequencies(&candidate_buf)) {
             candidate_frequency_buf.push_back(e);
         }
-        this->cache->clear_frequencies();
+        this->cache.clear_frequencies();
         while (candidate_frequency_buf.size() < this->capacity + 1) {
             candidate_frequency_buf.push_back(0);
         }
 
-        return {slice_processed.size, missed_element != NoneType, slice.size};
+        return {slice_processed.size, missed_element != NoneContentType, slice.size};
     }
 };

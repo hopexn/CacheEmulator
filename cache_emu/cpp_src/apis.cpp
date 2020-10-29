@@ -4,7 +4,7 @@
 RequestLoader loader;
 vector<CacheEmu *> cache_emus;
 
-void load_dataset(ElementType *cs, TimestampType *ts, size_t size)
+void load_dataset(ContentType *cs, TimestampType *ts, size_t size)
 {
     loader.load_dataset(cs, ts, size);
 }
@@ -83,7 +83,7 @@ void update_cache(int handler, IntBuffer v)
     if (VERBOSE) {
         cout << "emu[" << handler << "].new_contents: " << buffer_to_string(v) << endl;
     }
-    cache_emus[handler]->update_cache((ElementType *) v.data, v.size);
+    cache_emus[handler]->update_cache((ContentType *) v.data, v.size);
 }
 
 void setup_traditional_feature_types(int handler, bool use_lfu_feature, bool use_lru_feature, bool use_ogd_opt_feature)
@@ -110,9 +110,9 @@ void setup_swlfu_feature_types(int handler, int *w_lens, size_t size)
 }
 
 //获取所有特征
-FloatBuffer get_features(int handler, ElementType *es, size_t size)
+FloatBuffer get_features(int handler, ContentType *es, size_t size)
 {
-    ElementVector buf_e;
+    ContentVector buf_e;
     copy_to_std_vector(es, size, buf_e);
 
     auto features = cache_emus[handler]->get_features(buf_e);

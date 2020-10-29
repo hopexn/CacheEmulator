@@ -2,6 +2,7 @@
 #include <cstring>
 #include <cmath>
 #include <algorithm>
+#include <unordered_map>
 
 #include "utils.h"
 #include "request.hpp"
@@ -22,7 +23,7 @@ struct Feature
     Feature(FeatureType *data, size_t contentDims, size_t featureDims)
             : data(data), content_dims(contentDims), feature_dims(featureDims) {}
 
-    inline FeatureType get(size_t c_dim, size_t f_dim)
+    inline FeatureType get(size_t c_dim, size_t f_dim) const
     {
         return data[c_dim * feature_dims + f_dim];
     }
@@ -78,7 +79,7 @@ public:
 
     virtual void update(const Slice &s) = 0;
 
-    virtual Feature get_features(ElementVector &v) = 0;
+    virtual Feature get_features(ContentVector &v) = 0;
 };
 
 class IdFeatureExtractor : public FeatureExtractor
@@ -88,14 +89,14 @@ public:
 
     void reset() override
     {
-        if (DEBUG) {
+        if (VERBOSE) {
             cout << "IdFeatureExtractor reset." << endl;
         }
     }
 
     void update(const Slice &s) override {}
 
-    Feature get_features(ElementVector &v) override
+    Feature get_features(ContentVector &v) override
     {
         f_buf.resize(v.size() * this->feature_dims);
 
@@ -119,7 +120,7 @@ public:
 
     void reset() override
     {
-        if (DEBUG) {
+        if (VERBOSE) {
             cout << "LruFeatureExtractor reset." << endl;
         }
         latest_time = -1;
@@ -138,7 +139,7 @@ public:
         this->latest_time = s.data[s.size - 1].timestamp;
     }
 
-    Feature get_features(ElementVector &v) override
+    Feature get_features(ContentVector &v) override
     {
         f_buf.resize(v.size() * this->feature_dims);
 
@@ -161,7 +162,7 @@ public:
 
     void reset() override
     {
-        if (DEBUG) {
+        if (VERBOSE) {
             cout << "LfuFeatureExtractor reset." << endl;
         }
         for (int i = 0; i < MAX_CONTENTS; i++) {
@@ -177,7 +178,7 @@ public:
         }
     }
 
-    Feature get_features(ElementVector &v) override
+    Feature get_features(ContentVector &v) override
     {
         f_buf.resize(v.size() * this->feature_dims);
 
@@ -233,7 +234,7 @@ public:
 
     void reset() override
     {
-        if (DEBUG) {
+        if (VERBOSE) {
             cout << "SWLfuFeatureExtractor reset." << endl;
         }
         this->i_slice = 0;
@@ -289,7 +290,7 @@ public:
         i_slice++;
     }
 
-    Feature get_features(ElementVector &v) override
+    Feature get_features(ContentVector &v) override
     {
         f_buf.resize(v.size() * this->feature_dims);
 
@@ -305,13 +306,13 @@ public:
 class OgdFeatureExtractor : public FeatureExtractor
 {
 private:
-    unordered_map<ElementType, float *> W;      //根据内容快速找到内容特征
-    vector<pair<ElementType, float> *> W_heap;  //用于保存内容的特征，并使用最小堆维护特征的顺序
+    unordered_map<ContentType, float *> W;      //根据内容快速找到内容特征
+    vector<pair<ContentType, float> *> W_heap;  //用于保存内容的特征，并使用最小堆维护特征的顺序
     float W_sum = 0;
 
     size_t max_w_len = 0;
 
-    static bool cmp(pair<ElementType, float> *a, pair<ElementType, float> *b)
+    static bool cmp(pair<ContentType, float> *a, pair<ContentType, float> *b)
     {
         return a->second > b->second;
     }
@@ -358,7 +359,7 @@ public:
 
     void reset() override
     {
-        if (DEBUG) {
+        if (VERBOSE) {
             cout << "OgdFeatureExtractor reset." << endl;
         }
 
@@ -379,7 +380,7 @@ public:
         auto it = W.find(cid);
         if (it == W.end()) {
             //如果元素之前没有存储，那么创建一个新的键值对
-            auto pair_ptr = new pair<ElementType, float>(cid, eta);
+            auto pair_ptr = new pair<ContentType, float>(cid, eta);
             //W中保存特征的指针，保证W和W_heap中的特征值的一致
             W[cid] = &(pair_ptr->second);
 
@@ -412,7 +413,7 @@ public:
                 auto it = W.find(cid);
                 if (it == W.end()) {
                     //如果元素之前没有存储，那么创建一个新的键值对
-                    auto pair_ptr = new pair<ElementType, float>(cid, eta);
+                    auto pair_ptr = new pair<ContentType, float>(cid, eta);
                     //W中保存特征的指针，保证W和W_heap中的特征值的一致
                     W[cid] = &(pair_ptr->second);
 
@@ -441,7 +442,7 @@ public:
         }
     }
 
-    Feature get_features(ElementVector &v) override
+    Feature get_features(ContentVector &v) override
     {
         f_buf.resize(v.size() * this->feature_dims);
 
@@ -515,7 +516,7 @@ public:
 
     void reset()
     {
-        if (DEBUG) {
+        if (VERBOSE) {
             cout << "FeatureManager reset." << endl;
         }
         for (auto e: extractors) {
@@ -536,7 +537,7 @@ public:
         }
     }
 
-    inline Feature get_features(ElementVector &v)
+    inline Feature get_features(ContentVector &v)
     {
         auto content_dims = v.size();
         f_buf.resize(content_dims * this->feature_dims);

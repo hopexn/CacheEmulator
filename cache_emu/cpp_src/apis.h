@@ -12,7 +12,7 @@ extern "C" {
  * @param ts 请求发生的时间
  * @param size 请求的长度
  */
-void load_dataset(ElementType *cs, TimestampType *ts, size_t size);
+void load_dataset(ContentType *cs, TimestampType *ts, size_t size);
 
 /**
  * 将请求序列根据时间进行分片
@@ -111,7 +111,7 @@ void setup_swlfu_feature_types(int handler, int *w_lens, size_t size);
  * @param size      内容的数量
  * @return          目标内容的特征
  */
-FloatBuffer get_features(int handler, ElementType *es, size_t size);
+FloatBuffer get_features(int handler, ContentType *es, size_t size);
 
 /**
  * 缓存模拟器是否处理完所有请求

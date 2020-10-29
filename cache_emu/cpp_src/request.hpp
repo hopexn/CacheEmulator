@@ -15,14 +15,14 @@ struct Slice
 
     Slice(Request *data, size_t size) : data(data), size(size) {}
 
-    Slice sub_slice(int beg = 0, int end = -1)
+    Slice sub_slice(size_t beg = 0, size_t end = -1)
     {
         if (end == -1) { end = size; }
         ASSERT(beg >= 0 && end <= size && beg <= end);
         return Slice(data + beg, end - beg);
     }
 
-    const Request get(int idx) const
+    Request get(int idx) const
     {
         if (idx == -1) idx += size;
         ASSERT (idx < size && idx >= 0);
@@ -50,10 +50,10 @@ private:
     TimestampType timestamp_beg = 0, timestamp_end = 0, timestamp_interval = 1;
 
 public:
-    RequestLoader() = default;
+    explicit RequestLoader() = default;
 
     //导入数据集
-    void load_dataset(ElementType *cs, TimestampType *ts, size_t size)
+    void load_dataset(ContentType *cs, TimestampType *ts, size_t size)
     {
         for (size_t i = 0; i < size; i++) {
             this->requests.push_back({cs[i], ts[i]});

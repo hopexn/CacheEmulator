@@ -14,19 +14,20 @@
 #include <unordered_map>
 
 //缓存元素类型
-typedef int ElementType;
-typedef int TimestampType;
+typedef int32_t ContentType;
+typedef int32_t TimestampType;
 typedef float FeatureType;
 
 //NoneType记为-1
-const ElementType NoneType = -1;
+const ContentType NoneContentType = -1;
+const TimestampType NoneTimestampType = -1;
 
 #define EPS 1e-6            //精度
-#define MAX_CONTENTS 1e6    //最大ID值
+#define MAX_CONTENTS 1e7    //最大ID值
 
 struct Request
 {
-    ElementType content_id = NoneType;
+    ContentType content_id = NoneContentType;
     TimestampType timestamp = 0;
 };
 
@@ -35,11 +36,11 @@ struct Triple
     size_t first, second, third;
 };
 
-typedef std::vector<ElementType> ElementVector;
-typedef std::set<ElementType> ElementSet;
-typedef std::unordered_map<ElementType, size_t> ElementFreqMap;
+typedef std::vector<ContentType> ContentVector;
+typedef std::set<ContentType> ContentSet;
+typedef std::unordered_map<ContentType, size_t> ContentFreqMap;
 typedef std::vector<float> FloatVector;
-typedef std::vector<int> IntVector;
+typedef std::vector<int32_t> IntVector;
 
 
 template<typename T>

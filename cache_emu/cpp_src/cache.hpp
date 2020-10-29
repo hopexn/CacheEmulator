@@ -12,13 +12,13 @@ class Cache
 {
 private:
     //缓存内容
-    ElementVector entries;
-    //缓存内容集合，用于检测缓存命中与否
-    unordered_map<ElementType, size_t> pos_map;
-    unordered_map<ElementType, size_t> freq_map;
+    ContentVector contents;
+    //保存返回的频率值
+    FloatVector freq_ret;
 
-    //buf
-    FloatVector freq_buf;
+    //缓存内容集合，用于检测缓存命中与否
+    unordered_map<ContentType, size_t> pos_map;
+    unordered_map<ContentType, size_t> freq_map;
 
     inline void check_idx(size_t idx)
     {
@@ -26,35 +26,30 @@ private:
     }
 
 public:
-    explicit Cache(int capacity)
-    {
-        entries.resize(capacity);
-        for (auto &e : entries) {
-            e = NoneType;
-        }
-    }
+    explicit Cache(size_t _capacity)
+            : contents(_capacity, NoneContentType), freq_ret(_capacity, 0) {}
 
     void reset()
     {
-        if (DEBUG) {
+        if (VERBOSE) {
             cout << "Cache reset." << endl;
         }
 
-        for (auto &e : entries) {
-            e = NoneType;
+        for (auto &e : contents) {
+            e = NoneContentType;
         }
         pos_map.clear();
         freq_map.clear();
     }
 
     //获取所有缓存内容
-    inline ElementVector *get_contents()
+    inline ContentVector *get_contents()
     {
-        return &entries;
+        return &contents;
     }
 
     //获取某一个元素的频率
-    inline float get_frequency(ElementType e)
+    inline float get_frequency(ContentType e)
     {
         float freq = 0;
         auto it = this->freq_map.find(e);
@@ -65,16 +60,16 @@ public:
     }
 
     //获取每个内容的命中次数
-    inline FloatVector *get_frequencies(const ElementVector *elements)
+    inline FloatVector *get_frequencies(const ContentVector *elements)
     {
-        freq_buf.resize(0);
+        freq_ret.resize(0);
 
         for (auto &e: *elements) {
             auto freq = this->get_frequency(e);
-            freq_buf.push_back(freq);
+            freq_ret.push_back(freq);
         }
 
-        return &freq_buf;
+        return &freq_ret;
     }
 
 
@@ -93,7 +88,7 @@ public:
     //缓存的最大容量
     inline size_t capacity()
     {
-        return this->entries.size();
+        return this->contents.size();
     }
 
     //缓存是否已满
@@ -103,30 +98,30 @@ public:
     }
 
     //获取缓存某一位置上的内容
-    inline ElementType get(size_t idx)
+    inline ContentType get(size_t idx)
     {
         this->check_idx(idx);
-        return this->entries[idx];
+        return this->contents[idx];
     }
 
     //将内容放置在某处
-    inline void set(size_t idx, ElementType e)
+    inline void set(size_t idx, ContentType e)
     {
         ASSERT((this->pos_map.find(e) == this->pos_map.end()) && "Error: content is already in the cache!");
 
         this->check_idx(idx);
-        auto e_old = this->entries[idx];
+        auto e_old = this->contents[idx];
         auto it = this->pos_map.find(e_old);
         if (it != this->pos_map.end()) {
             this->pos_map.erase(it);
         }
 
-        this->entries[idx] = e;
+        this->contents[idx] = e;
         this->pos_map[e] = idx;
     }
 
     //根据元素查找它在缓存中的位置，-1表示该元素不在缓存中
-    inline int find(ElementType e)
+    inline int find(ContentType e)
     {
         auto it = this->pos_map.find(e);
         if (it != this->pos_map.end()) {
@@ -138,42 +133,28 @@ public:
     }
 
     //检测内容是否在缓存中，同时更新内容频率
-    inline bool hit_test(ElementType e)
+    inline bool hit_test(ContentType e)
     {
-        if (this->freq_map.find(e) == this->freq_map.end()) {
-            freq_map[e] = 0;
-        }
         freq_map[e]++;
-
         auto idx = this->find(e);
         return idx != -1;
     }
 
     //使用新的内容替换老的内容
-    inline void replace(ElementType e_new, ElementType e_old)
+    inline void replace(ContentType e_new, ContentType e_old)
     {
         if (VERBOSE) {
             cout << "cache.replace: " << e_new << ", " << e_old << endl;
         }
 
         int idx;
-        if (e_old == NoneType)
+        if (e_old == NoneContentType)
             idx = this->size();
         else
             idx = this->find(e_old);
 
-        ASSERT(idx != -1 && "Can't find origin element!");
+        ASSERT(idx != -1 && "Can't find origin content!");
 
         this->set(idx, e_new);
     }
-
-    friend ostream &operator<<(ostream &os, Cache &cache)
-    {
-        for (auto &e: cache.entries) {
-            auto freq = cache.get_frequency(e);
-            os << e << " " << freq << endl;
-        }
-        return os;
-    }
 };
-

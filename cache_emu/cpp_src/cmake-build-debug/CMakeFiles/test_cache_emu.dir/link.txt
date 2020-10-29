@@ -1,0 +1,1 @@
+g++  -g -Wl,-search_paths_first -Wl,-headerpad_max_install_names -L/usr/local/opt/openssl/lib CMakeFiles/test_cache_emu.dir/test.cpp.o CMakeFiles/test_cache_emu.dir/apis.cpp.o  -o test_cache_emu 

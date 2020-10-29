@@ -1,17 +1,16 @@
 import gym
 import numpy as np
 
-from cache_emu import CacheEmu
-from callbacks import CallbackManager
+from .callback import CallbackManager
+from .emu import CacheEmu
 
 
 class ActiveCacheEnv(gym.Env):
-    
     def __init__(self, capacity: int, callback_manager: CallbackManager = None, feature_config={}):
         self.capacity = capacity
         
         self.emu = CacheEmu(capacity, passive_mode=False)
-        self.callback_manger = callback_manager
+        self.callback_manager = callback_manager
         self.candidates = None
         
         self.emu.setup_features(**feature_config)
@@ -27,15 +26,16 @@ class ActiveCacheEnv(gym.Env):
     
     def reset(self):
         self.emu.reset()
-        self.callback_manger.reset()
-        self.callback_manger.on_game_begin()
+        if self.callback_manager is not None:
+            self.callback_manager.reset()
+            self.callback_manager.on_game_begin()
         
         self.candidates = self.emu.get_candidates()
         observation = self.emu.get_features(self.candidates)
         return observation
     
     def close(self):
-        self.callback_manger.on_game_end()
+        self.callback_manager.on_game_end()
     
     def step(self, action: np.array):
         info = {}
@@ -51,7 +51,7 @@ class ActiveCacheEnv(gym.Env):
             reward = self.emu.get_candidate_frequencies()
             done = self.emu.finished()
             
-            step_end_info = self.callback_manger.on_step_end()
+            step_end_info = self.callback_manager.on_step_end()
             info.update(step_end_info)
             
             if n_requests_processed != 0:
@@ -68,7 +68,7 @@ class PassiveCacheEnv(gym.Env):
         self.capacity = capacity
         
         self.emu = CacheEmu(capacity, passive_mode=True)
-        self.callback_manger = callback_manager
+        self.callback_manager = callback_manager
         self.candidates = None
         
         self.emu.setup_features(**feature_config)
@@ -84,8 +84,8 @@ class PassiveCacheEnv(gym.Env):
     
     def reset(self):
         self.emu.reset()
-        self.callback_manger.reset()
-        self.callback_manger.on_game_begin()
+        self.callback_manager.reset()
+        self.callback_manager.on_game_begin()
         
         self.candidates = np.arange(self.capacity + 1, dtype=np.int32)
         self.emu.update_cache(self.candidates[:self.capacity])
@@ -93,7 +93,7 @@ class PassiveCacheEnv(gym.Env):
         return observation
     
     def close(self):
-        self.callback_manger.on_game_end()
+        self.callback_manager.on_game_end()
     
     def step(self, action: np.array):
         info = {}
@@ -108,7 +108,7 @@ class PassiveCacheEnv(gym.Env):
             
             reward += self.emu.get_candidate_frequencies()
             if n_requests_remained == 0:
-                step_end_info = self.callback_manger.on_step_end()
+                step_end_info = self.callback_manager.on_step_end()
                 info.update(step_end_info)
             
             done = self.emu.finished()
