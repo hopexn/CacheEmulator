@@ -1,6 +1,6 @@
 class Callback:
     def __init__(self):
-        pass
+        self.test_mode = False
     
     def on_step_end(self):
         pass
@@ -13,6 +13,9 @@ class Callback:
     
     def on_game_end(self):
         pass
+    
+    def switch_mode(self, test_mode=False):
+        self.test_mode = test_mode
     
     def reset(self):
         pass
@@ -67,6 +70,11 @@ class CallbackManager:
                 info.update(res)
         
         return info
+    
+    def switch_mode(self, test_mode=False):
+        for cb in self.callbacks:
+            cb.switch_mode(test_mode)
+        print("Switch to {} mode.".format("test" if test_mode else "train"))
     
     def reset(self):
         for cb in self.callbacks:
