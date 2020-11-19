@@ -3,12 +3,14 @@ import os
 
 import numpy as np
 
-from .utils import ctypes_utils, proj_utils
+from .utils import ctypes_utils
 
 # 项目根目录
-_project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+_package_root = os.path.abspath(os.path.dirname(__file__))
+print("cd {} && make".format(os.path.join(_package_root, "cpp_src")))
+os.system("make {}".format(os.path.join(_package_root, "cpp_src/Makefile")))
+lib_path = os.path.join(_package_root, "./build/libcacheemu.so")
 
-lib_path = proj_utils.abs_path("./build/libcacheemu.so")
 lib_cache_emu = ctypes_utils.load_lib(lib_path)
 
 ctypes_utils.setup_res_type(lib_cache_emu.load_dataset, ctypes.c_void_p)

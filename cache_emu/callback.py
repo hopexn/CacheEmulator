@@ -1,9 +1,16 @@
 class Callback:
-    def __init__(self):
-        self.test_mode = False
+    def __init__(self, interval: int = 1, test_mode=False, **kwargs):
+        self.interval = interval
+        self.test_mode = test_mode
+        
+        self.i_step = 0
+        self.i_episode = 0
     
     def on_step_end(self):
-        pass
+        self.i_step += 1
+        if self.i_step % self.interval == 0:
+            self.i_episode += 1
+            return self.on_episode_end()
     
     def on_episode_end(self):
         pass
@@ -18,38 +25,26 @@ class Callback:
         self.test_mode = test_mode
     
     def reset(self):
-        pass
+        self.i_step = 0
+        self.i_episode = 0
 
 
 class CallbackManager:
-    def __init__(self, num_episode_steps: int):
+    def __init__(self):
         self.callbacks = []
-        self.n_episode_steps = num_episode_steps
-        self.step_count = 0
-        
-        assert (self.n_episode_steps > 0)
     
     def register_callback(self, callback: Callback):
         self.callbacks.append(callback)
     
     def on_step_end(self):
-        self.step_count += 1
-        
         info = {}
         
         for cb in self.callbacks:
-            cb.on_step_end()
-        
-        if self.step_count % self.n_episode_steps == 0:
-            for cb in self.callbacks:
-                res = cb.on_episode_end()
-                if res is not None:
-                    info.update(res)
+            res = cb.on_step_end()
+            if res is not None:
+                info.update(res)
         
         return info
-    
-    def on_episode_end(self):
-        pass
     
     def on_game_begin(self):
         info = {}

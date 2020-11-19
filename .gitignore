@@ -1,5 +1,5 @@
 # Created by .ignore support plugin (hsz.mobi)
-.idea/
+.idea
 cache_emu/cpp_src/.DS_Store
 __pycache__
 *.egg-info
